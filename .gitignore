@@ -161,3 +161,7 @@ cython_debug/
 
 env
 GeneratedFiles
+/checkpoint
+/Dataset
+/logs
+/Models/resnet50_org.h5

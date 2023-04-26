@@ -1,3 +1,11 @@
 pyside6
 opencv-python
 pyqt6-tools
+tensorflow
+keras
+keras-vggface
+scikit-image
+pandas
+numpy
+keras_applications
+keras_preprocessing

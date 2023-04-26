@@ -114,7 +114,13 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBoxModelSelection"/>
+           <widget class="QComboBox" name="comboBoxModelSelection">
+            <item>
+             <property name="text">
+              <string>ResNet50</string>
+             </property>
+            </item>
+           </widget>
           </item>
           <item>
            <spacer name="horizontalSpacerEndModelSelection">
@@ -177,48 +183,74 @@
             <property name="title">
              <string>Detailed Stats</string>
             </property>
-            <layout class="QFormLayout" name="formLayout">
-             <item row="0" column="0">
-              <widget class="QLabel" name="labelTopEmotion_1">
-               <property name="text">
-                <string>Top Emotion-1:</string>
-               </property>
-              </widget>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_5">
+               <item>
+                <widget class="QLabel" name="labelTopEmotion_1">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Top Emotion-1:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="labelTopEmotion_2">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Top Emotion-2: </string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="labelTopEmotion_3">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Top Emotion-3:</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
-             <item row="0" column="1">
-              <widget class="QProgressBar" name="progressBarTopEmotion1">
-               <property name="value">
-                <number>24</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="labelTopEmotion_2">
-               <property name="text">
-                <string>Top Emotion-2: </string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QProgressBar" name="progressBarTopEmotion2">
-               <property name="value">
-                <number>24</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="labelTopEmotion_3">
-               <property name="text">
-                <string>Top Emotion-3:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QProgressBar" name="progressBarTopEmotion3">
-               <property name="value">
-                <number>24</number>
-               </property>
-              </widget>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_4">
+               <item>
+                <widget class="QProgressBar" name="progressBarTopEmotion1">
+                 <property name="value">
+                  <number>24</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QProgressBar" name="progressBarTopEmotion2">
+                 <property name="value">
+                  <number>24</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QProgressBar" name="progressBarTopEmotion3">
+                 <property name="value">
+                  <number>24</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>
