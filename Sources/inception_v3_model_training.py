@@ -1,13 +1,13 @@
 """
-File name: model_training.py
+File name: inception_v3_model_training.py
 Author: Jinesh Mehta
 File Description: This file contains the functions to train the model.
 """
 import os
-from constants import RESNET_MODEL_PATH, RESNET_FER_IMG_HEIGHT, RESNET_FER_IMG_WIDTH,\
-    BASE_MODEL_NAME, BASE_MODEL_INITIAL_WEIGHTS, NUM_CLASSES, \
-    EPOCHS_TOP_LAYERS, EPOCHS_ALL_LAYERS, BATCH_SIZE, RESNET_FER_MEAN,\
-    FER_TRAIN_DATA_PATH, FER_EVAL_DATA_PATH, LOGS_DIRECTORY_PRE_LAYERS,\
+from constants import INCEPTION_V3_MODEL_PATH, INCEPTION_FER_IMG_HEIGHT, INCEPTION_FER_IMG_WIDTH,\
+    INCEPTION_BASE_MODEL_INITIAL_WEIGHTS, NUM_CLASSES, \
+    EPOCHS_TOP_LAYERS, EPOCHS_ALL_LAYERS, BATCH_SIZE, INCEPTION_FER_MEAN,\
+    INCEPTION_FER_STD, FER_TRAIN_DATA_PATH, FER_EVAL_DATA_PATH, LOGS_DIRECTORY_PRE_LAYERS,\
     LOGS_DIRECTORY_ALL_LAYERS, MODEL_LEARNING_RATE, MODEL_MOMENTUM, \
     MODEL_DECAY, MODEL_LOSS, CHECKPOINT_DIRECTORY
 
@@ -17,27 +17,26 @@ from keras.optimizers import SGD
 from skimage.transform import resize
 from keras import backend as K
 from keras.utils import to_categorical
-from keras_vggface.vggface import VGGFace
+from keras.applications.inception_v3 import InceptionV3
 from keras.models import Model
-from keras.layers import Flatten, Dense
+from keras.layers import GlobalAveragePooling2D, Dense
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import Adam
 from keras.callbacks import TensorBoard, LearningRateScheduler, ReduceLROnPlateau, EarlyStopping, Callback
 
 
-def model_creation_from_vgg_face():
-    """ Creates a model from the VGGFace model.
+def model_creation_from_imagenet():
+    """ Creates a model from the ImageNet model.
 
     Returns:
         _type_: Model
     """
-    base_model = VGGFace(
-        model=BASE_MODEL_NAME,
+    base_model = InceptionV3(
         include_top=False,
-        weights=BASE_MODEL_INITIAL_WEIGHTS,
-        input_shape=(RESNET_FER_IMG_HEIGHT, RESNET_FER_IMG_WIDTH, 3))
+        weights=INCEPTION_BASE_MODEL_INITIAL_WEIGHTS,
+        input_shape=(INCEPTION_FER_IMG_HEIGHT, INCEPTION_FER_IMG_WIDTH, 3))
     x = base_model.output
-    x = Flatten()(x)
+    x = GlobalAveragePooling2D()(x)
     x = Dense(1024, activation='relu')(x)
     predictions = Dense(NUM_CLASSES, activation='softmax')(x)
     model = Model(inputs=base_model.input, outputs=predictions)
@@ -49,14 +48,15 @@ def perform_data_preparation():
     """
 
     def preprocess_input(x):
-        x -= RESNET_FER_MEAN
+        x /= INCEPTION_FER_MEAN
+        x -= INCEPTION_FER_STD
         return x
 
     def get_data(dataset_location):
         data = pd.read_csv(dataset_location)
         pixels = data['pixels'].tolist()
         images = np.empty(
-            (len(data), RESNET_FER_IMG_HEIGHT, RESNET_FER_IMG_WIDTH, 3))
+            (len(data), INCEPTION_FER_IMG_HEIGHT, INCEPTION_FER_IMG_WIDTH, 3))
         i = 0
         for pixel_sequence in pixels:
             single_image = [float(pixel)
@@ -64,8 +64,9 @@ def perform_data_preparation():
             single_image = np.asarray(single_image).reshape(
                 48, 48)
             single_image = resize(
-                single_image, (RESNET_FER_IMG_HEIGHT, RESNET_FER_IMG_WIDTH), order=3, mode='constant')
-            ret = np.empty((RESNET_FER_IMG_HEIGHT, RESNET_FER_IMG_WIDTH, 3))
+                single_image, (INCEPTION_FER_IMG_HEIGHT, INCEPTION_FER_IMG_WIDTH), order=3, mode='constant')
+            ret = np.empty((INCEPTION_FER_IMG_HEIGHT,
+                           INCEPTION_FER_IMG_WIDTH, 3))
             ret[:, :, 0] = single_image
             ret[:, :, 1] = single_image
             ret[:, :, 2] = single_image
@@ -265,7 +266,7 @@ def fine_tune_from_resnet(model, train_generator, train_data_x, val_data):
 
     check_point = ModelCheckpoint(
         filepath=os.path.join(CHECKPOINT_DIRECTORY,
-                              'ResNet-50_{epoch:02d}_{val_loss:.2f}.h5'),
+                              'Inception-v3_{epoch:02d}_{val_loss:.2f}.h5'),
         monitor='val_loss',
         save_best_only=True,
         mode='auto',
@@ -293,13 +294,13 @@ def save_model(model, model_path):
 def main():
     """main function.
     """
-    base_model, model = model_creation_from_vgg_face()
+    base_model, model = model_creation_from_imagenet()
     train_generator, train_data_x, val_data = perform_data_preparation()
     updated_model = training_pre_layers(
         base_model, model, train_generator, train_data_x, val_data)
     trained_model = fine_tune_from_resnet(
         updated_model, train_generator, train_data_x, val_data)
-    save_model(trained_model, RESNET_MODEL_PATH)
+    save_model(trained_model, INCEPTION_V3_MODEL_PATH)
 
 
 if __name__ == '__main__':

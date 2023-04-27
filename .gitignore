@@ -164,4 +164,6 @@ GeneratedFiles
 /checkpoint
 /Dataset
 /logs
-/Models/resnet50_org.h5
+/Models/resnet50
+/Models/inception_v2
+/Models/inception_v3

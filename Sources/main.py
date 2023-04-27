@@ -11,7 +11,7 @@ if __name__ == "__main__":
     """Main function of the application
     """
     app = QApplication()
-    w = MainWindow(app)
+    w = MainWindow()
     w.startVideo()
     w.show()
     sys.exit(app.exec())
